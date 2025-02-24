@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register / Login</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #1d2b64, #f8cdda);
+            overflow: hidden;
+        }
+
+        .container {
+            width: 350px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: 0.5s ease-in-out;
+        }
+
+        .forms-container {
+            display: flex;
+            width: 200%;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .form {
+            width: 50%;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        h2 {
+            color: white;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: none;
+            outline: none;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+            font-size: 16px;
+            transition: 0.3s ease;
+        }
+
+        input:focus {
+            background: rgba(255, 255, 255, 0.6);
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+        }
+
+        /* Password Strength */
+        #passwordStrength {
+            font-size: 14px;
+            font-weight: bold;
+            margin-top: -5px;
+            text-align: left;
+            color: white;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background: linear-gradient(135deg, #ff512f, #dd2476);
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s ease;
+			margin-bottom: 20px;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+        }
+
+        /* Improved Password Field */
+        .password-container {
+            position: relative;
+            width: 100%;
+            display: flex;
+            align-items: center;
+        }
+
+        .password-container input {
+            width: 100%;
+            padding-right: 40px;
+			margin-bottom: 20px;
+        }
+
+        /* Animated Eye Icon */
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .toggle-password:hover {
+            transform: scale(1.2);
+        }
+
+        .eye-open {
+            color: #ffb400;
+        }
+
+        .eye-closed {
+            color: #f00;
+            transform: rotate(180deg);
+        }
+
+        /* Shake Effect */
+        .shake {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="forms-container" id="formContainer">
+            <div class="form" id="registerForm">
+                <h2>Register</h2>
+                <input type="text" id="regName" placeholder="Full Name" required>
+                <input type="email" id="regEmail" placeholder="Email" required>
+                <div class="password-container">
+                    <input type="password" id="regPassword" placeholder="Password" required>
+                    <span class="toggle-password eye-closed" onclick="togglePassword('regPassword', this)">👁️</span>
+                </div>
+                <p id="passwordStrength"></p>
+                <button onclick="registerUser()">Register</button>
+                <p>Already registered? <a href="#" onclick="showLogin()">Login here</a></p>
+            </div>
+
+            <div class="form" id="loginForm">
+                <h2>Login</h2>
+                <input type="email" id="loginEmail" placeholder="Email" required>
+                <div class="password-container">
+                    <input type="password" id="loginPassword" placeholder="Password" required>
+                    <span class="toggle-password eye-closed" onclick="togglePassword('loginPassword', this)">👁️</span>
+                </div>
+                <button onclick="loginUser()">Login</button>
+                <p>Not registered yet? <a href="#" onclick="showRegister()">Register here</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let isLogin = false;
+
+        function showLogin() {
+            document.getElementById('formContainer').style.transform = 'translateX(-50%)';
+            isLogin = true;
+        }
+
+        function showRegister() {
+            document.getElementById('formContainer').style.transform = 'translateX(0)';
+            isLogin = false;
+        }
+
+        function registerUser() {
+            let name = document.getElementById('regName').value;
+            let email = document.getElementById('regEmail').value;
+            let password = document.getElementById('regPassword').value;
+
+            if (name === '' || email === '' || password === '') {
+                alert('Please fill all fields');
+                return;
+            }
+
+            localStorage.setItem('userEmail', email);
+            localStorage.setItem('userPassword', password);
+            alert('Registration successful! You can now log in.');
+            showLogin();
+        }
+
+        function loginUser() {
+            let email = document.getElementById('loginEmail').value;
+            let password = document.getElementById('loginPassword').value;
+            let storedEmail = localStorage.getItem('userEmail');
+            let storedPassword = localStorage.getItem('userPassword');
+
+            if (email === storedEmail && password === storedPassword) {
+                alert('Login successful! Redirecting to dashboard.');
+                window.location.href = 'dashboard.html';
+            } else {
+                let form = document.getElementById('loginForm');
+                form.classList.add('shake');
+                setTimeout(() => form.classList.remove('shake'), 500);
+                alert('Invalid email or password.');
+            }
+        }
+
+        function togglePassword(id, element) {
+            let input = document.getElementById(id);
+            if (input.type === 'password') {
+                input.type = 'text';
+                element.classList.remove('eye-closed');
+                element.classList.add('eye-open');
+            } else {
+                input.type = 'password';
+                element.classList.remove('eye-open');
+                element.classList.add('eye-closed');
+            }
+        }
+
+        document.getElementById('regPassword').addEventListener('input', function() {
+            let strength = document.getElementById('passwordStrength');
+            let value = this.value;
+
+            if (value.length < 4) {
+                strength.innerHTML = 'Weak';
+                strength.style.color = 'red';
+            } else if (value.length < 8) {
+                strength.innerHTML = 'Medium';
+                strength.style.color = 'orange';
+            } else {
+                strength.innerHTML = 'Strong';
+                strength.style.color = 'green';
+            }
+        });
+    </script>
+</body>
+</html>
